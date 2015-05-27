@@ -9,5 +9,6 @@
  "repository":{"type":"git",
 	       "url":"https://github.com/forward/timothy.git"},
  "licenses":[{"type":"LGPL V3",
-	      "url":"http://www.gnu.org/licenses/lgpl.html"}]}
-
+	      "url":"http://www.gnu.org/licenses/lgpl.html"}],
+ "contributors": [{"name": "Mikko Piuhola",
+          "email": "<mikko.piuhola@metropolia.fi>"}]}

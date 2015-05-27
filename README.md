@@ -1,6 +1,8 @@
 timothy: Node.js library for writing Hadoop MapReduce jobs in JS
 ===============================================================
 
+**mikkopiu: Updated crucial methods to work with Hadoop 2.6.0 (May 2015). Only tested for specific use case, no guarantees.**
+
 Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
 
 ## Installation
@@ -13,7 +15,7 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
     // require timothy
     require('timothy')
         // basic configuration for the job: hadoop conf, input, output, name, etc
-        .configure({	
+        .configure({
              hadoopHome: "/path/to/hadoop/home" // this can be provided from environment
              config: "./hadoop.xml",
              input:  "/test.txt",
@@ -31,7 +33,7 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
         .reduce(function(word,counts){
             emit(word, counts.length); // emit is part of object so can be called without the 'this' qualification
         })
-        // run function, creates the job, uploads it and blocks until 
+        // run function, creates the job, uploads it and blocks until
         // the execution has finished
         .run();
 ```
@@ -48,7 +50,7 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
         .reduce(function(word,counts){
             this.emit(word, counts.length);
         })
-        // runLocal can be used instead of run to simulate the job execution 
+        // runLocal can be used instead of run to simulate the job execution
         // from the command line
         .runLocal("~/Desktop/test_input.txt");
 ```
@@ -57,7 +59,7 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
 
 ```javascript
     require('timothy')
-        .configure({	
+        .configure({
              config: "./hadoop.xml",
              input:  "/test.txt",
              output: "/processed_"+(new Date().getTime()),
@@ -89,13 +91,13 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
     (function(offset1,offset2){
 
         require('timothy')
-            .configure({	
+            .configure({
                  config: "./hadoop.xml",
                  input:  "/test.txt",
                  output: "/processed_"+(new Date().getTime()),
                  name:   "Timothy Word Count Example",
                  //environment variables
-                 cmdenv: "offset1="+offset1+",offset2="+offset2 
+                 cmdenv: "offset1="+offset1+",offset2="+offset2
             })
             .map(function(line){
     	        // mapper and reducer process can now access
@@ -118,7 +120,7 @@ Timothy's primary goal is to make Hadoop's Yellow Elephant rich and famous.
 
 ```javascript
     require('timothy')
-        .configure({	
+        .configure({
              config: "./hadoop.xml",
              input:  "/test.txt",
              output: "/processed_"+(new Date().getTime()),

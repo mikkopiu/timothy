@@ -1,7 +1,7 @@
 var fs = require('fs');
 var exec = require('child_process').exec;
 
-var JobDescription = function() { 
+var JobDescription = function() {
     this.filesToCompress = [];
     this.mappers = [];
     this.reducers = [];
@@ -110,7 +110,7 @@ JobDescription.prototype.generate = function(index, cb) {
 
     var that = this, data;
 
-    exec("mkdir -p "+this.jobWorkingDirectory, 
+    exec("mkdir -p "+this.jobWorkingDirectory,
 	       function (error, stdout, stderr) {
 	           if (error !== null) {
 		             console.log('(!!) exec error: ' + error);
@@ -123,7 +123,7 @@ JobDescription.prototype.generate = function(index, cb) {
 		                 data = data.replace("//@LOCALS_HERE","this.setup = "+that.setupFn.toString()+"; setup();");
 
 		             fs.writeFileSync(that.mapperPath, data, "utf8");
-		             
+
 		             data = fs.readFileSync(__dirname+"/timothy/reducer_template.js", "utf8");
 		             data = data.replace("//@REDUCER_HERE", "this.reduce="+that.reducers[index]+";");
 
@@ -131,7 +131,7 @@ JobDescription.prototype.generate = function(index, cb) {
 		                 data = data.replace("//@LOCALS_HERE","this.setup = "+that.setupFn.toString()+"; setup();");
 
 		             fs.writeFileSync(that.reducerPath, data, "utf8");
-		             
+
 		             that.generatePackageDotJSON(function(error){
 		                 if(error) {
 			                   cb(error, that);
@@ -142,7 +142,7 @@ JobDescription.prototype.generate = function(index, cb) {
 			                       } else {
 				                         that.generateShellScripts(function(error){
 				                             if(error) {
-					                               cb(error, that);							 
+					                               cb(error, that);
 				                             } else {
 					                               that.compressFiles(function(error){
 					                                   cb(error, that);
@@ -166,7 +166,7 @@ JobDescription.prototype.execute = function(index, cb) {
 
     if(index > 0 && this.mappers.length > 1)
 	      input = this.configuration.output + "_stage_" + (index - 1);
-    else 
+    else
 	      input = this.configuration.input;
 
     if(index < (this.mappers.length -1) )
@@ -175,14 +175,14 @@ JobDescription.prototype.execute = function(index, cb) {
 	      output = this.configuration.output;
 
     console.log("* executing");
-    var command = this.configuration.hadoopHome+"/bin/hadoop jar "+this.configuration.hadoopHome+"/contrib/streaming/hadoop*streaming*.jar ";
-    command += "-D mapred.job.name='"+jobName+"' ";
+    var command = this.configuration.hadoopHome+"/bin/hadoop jar "+this.configuration.hadoopHome+"/share/hadoop/tools/lib/hadoop*streaming*.jar ";
+    command += "-D mapreduce.job.name='"+jobName+"' ";
 
     if(this.configuration.numMapTasks != null)
-	      command += "-D mapred.map.tasks="+this.configuration.numMapTasks+" ";
+	      command += "-D mapreduce.job.maps="+this.configuration.numMapTasks+" ";
 
     if(this.configuration.numRedTasks != null)
-	      command += "-D mapred.reduce.tasks="+this.configuration.numMapTasks+" ";
+	      command += "-D mapreduce.job.reduces="+this.configuration.numMapTasks+" ";
 
     for(var prop in this.configuration) {
 	      if(prop.indexOf(".") != null && prop.split(".").length > 2) {
@@ -197,7 +197,7 @@ JobDescription.prototype.execute = function(index, cb) {
     command += "-outputformat '"+this.configuration.outputFormat+"' ";
     if(input.constructor === Array) {
 	      for(var i=0; i<input.length; i++)
-	          command += "-input "+input[i]+" ";	    
+	          command += "-input "+input[i]+" ";
     } else {
 	      command += "-input "+input+" ";
     }
@@ -212,10 +212,10 @@ JobDescription.prototype.execute = function(index, cb) {
 	      command += "-partitioner "+this.configuration.partitioner+" ";
     if(this.configuration.cmdenv != null) {
         var parts = this.configuration.cmdenv.split(",");
-        for(var i=0; i<parts.length; i++) 
+        for(var i=0; i<parts.length; i++)
 	          command += "-cmdenv "+parts[i]+" ";
     }
-    
+
     var mapperScript = this.mapperPath.split("/");
     mapperScript = mapperScript[mapperScript.length-1];
     command += "-mapper 'mapper.sh' ";
